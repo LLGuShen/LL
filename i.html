@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>3d图片</title>
+	<style type="text/css">
+		*{
+			margin:0px;
+			padding:0px;
+		}
+		body{
+			background:#000;
+		}
+		img{
+			border: 0;
+            display: block;
+		}
+		.pic{
+			width:133px;
+			height:200px;
+			background:url("img/121.jpg");
+			background-size:cover;
+			margin:100px auto 0px;
+			position: relative;
+            /*设置视距*/
+			transform: perspective(800px) rotateX(-20deg) rotateY(10deg);
+            /*定义3D环境*/
+            transform-style:preserve-3d;
+		}
+		.pic img{
+			position:absolute;
+            top: 0;
+            left: 0;
+			border-radius:5px;
+			box-shadow:0px 0px 10px #fff;
+			width:100%;
+			height:100%;
+			/*-webkit-box-reflect:below 10px -webkit-linear-gradient(top,rgba(0,0,0,0) 50%,rgba(0,0,0,.5)100%);*/
+		}
+	</style>
+</head>
+<body>
+	<div class="pic" id="pic">
+		<img src="img/1.jpg" alt="">
+		<img src="img/2.jpg" alt="">
+		<img src="img/3.jpg" alt="">
+		<img src="img/4.jpg" alt="">
+		<img src="img/5.jpg" alt="">
+		<img src="img/6.jpg" alt="">
+		<img src="img/7.jpg" alt="">
+		<img src="img/8.jpg" alt="">
+		<img src="img/9.jpg" alt="">
+		<img src="img/10.jpg" alt="">
+		<img src="img/11.jpg" alt="">
+	</div>
+	<!-- <audio src="mp3/example.mp3.js" autoplay></audio> -->
+	<script src="./js/jquery-1.11.3.min.js"></script>
+	<script>
+		$(function(){
+			// 计算图片的个数
+			var imgL = $('#pic img').size(),
+    			deg = 360/imgL,
+    			//  旋转的角度
+    			roY = 0,
+                roX = 0;
+   //      	$('#pic img').css({
+			// 	transition:"1s "+(imgL-9)*0.15+"s ease,.5s "+(1+imgL*0.15)+"s opacity",
+			// 	transform:'rotateY('+deg*9+'deg) translateZ(300px) '
+			// 	// 禁用图片拖动
+			// }).attr('ondragstart','return false');
+            for (var i=imgL-1;i>=0;i--){
+				$('#pic img').eq(i).css({
+					//1s "+(imgL-i)*0.15+"s ease  所有的图片都添加过渡效果
+					//.5s "+(1+imgL*0.15)+"s opacity  单个图片添加过渡效果
+					transition:"all 1s "+(imgL-i)*0.15+"s ease,.5s "+(1+imgL*0.15)+"s opacity",
+					transform:'rotateY('+deg*i+'deg) translateZ(360px)'
+				}).attr('ondragstart','return false');
+                //禁止图片拖动
+			}
+            //鼠标按下
+		    $(document).mousedown(function(ev){
+                // 获取当前坐标
+				var nowX = ev.clientX;
+				var nowY = ev.clientY;
+				//鼠标移动
+				$(this).on('mousemove',function(ev){
+					//  获取当前坐标
+					var x = ev.clientX;
+					var y = ev.clientY;
+
+					//  x 的旋转角度  给 y的坐标
+					//  y 的旋转角度  给 x的坐标
+					var xN = x - nowX;
+					var yN = y - nowY;
+
+					// 添加误差值
+					roY += xN*0.2;
+					roX -= yN*0.1;
+
+					//  把计算好之后的 角度 赋予  盒子旋转
+					$('#pic').css({
+						transform : 'perspective(1000px) rotateX('+roX+'deg) rotateY('+roY+'deg)',
+					})
+
+					//前一点的坐标
+					nowX = ev.clientX;
+					nowY = ev.clientY;
+				});
+			}).mouseup(function(){
+				//鼠标抬起的时候 解放绑定的事件
+				$(this).off('mousemove');
+				console.log('抬起')
+			})
+		})
+	</script>
+</body>
+</html>
